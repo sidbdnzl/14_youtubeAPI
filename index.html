@@ -5,22 +5,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Youtubeプレイヤー</title>
+    <style>
+        body {
+            background-color: #f9edff;
+        }
+
+        #player {
+            margin-top: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form {
+            margin-top: 200px;
+            justify-content: center;
+            display: flex;
+            gap: 5px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #one {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            font-size: 35px;
+        }
+    </style>
 </head>
 
 <body>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <!-- 1. ここの<div>タグがYoutubeの<iframe>に置き換わる。 -->
-
+    <form>
+        <input type="search" id="ytSearch" value="yonige" />
+        <button id="searchBtn">検索</button>
+    </form>
     <div id="player"></div>
+
+
+    <!-- <nav>の上に -->
+    <!-- <nav>...</nav> -->
     <!-- 動画が表示されている<div>の下に追加 -->
     <nav>
         <ul>
-            <li id="doplay">再生</li>
-            <li id="dostop">停止</li>
-            <li id="dopause">一時停止</li>
-            <li id="mute">ミュート</li>
-            <li id="do10sNext">10秒先へ</li>
-            <li id="do10sPrev">10秒戻る</li>
+            <div id="one">
+                <li id="do10sPrev">⏪️</li>
+                <li id="doplay">▶️</li>
+                <li id="do10sNext">⏩️</li>
+            </div>
+            <li id="dostop">⏹️</li>
+            <li id="dopause">⏸️</li>
+            <li id="mute">🔕</li>
             <li>
                 <label>ボリューム<input type="range" min="0" max="100" name="volume" id="volume" value="50" />
                     <span id="volumeNum">50</span>
@@ -29,10 +69,6 @@
             <li>
                 <select id="MovieId" class="ytMovie" name="ytMovie">
                     <option selected>選択してください。</option>
-                    <option value="tV3eTJRQSjo">Crossfaith - 'ZERO'</option>
-                    <option value="T1inloiWTu0">Knosis - FUHAI</option>
-                    <option value="BT4env-Tw2o">Crossfaith - "Jägerbomb"</option>
-                    <option value="Yu1CgWt26VI">Crossfaith - "Monolith"</option>
                 </select>
             </li>
             <li>
@@ -68,7 +104,7 @@
         //    after the API code downloads.
         // 3. APIのコードを読み込んでから、この関数を<iframe>内に影響させる。
         var player;
-        let youtubeId = 'cT7C_95nKcM'; //TRIDENT × GOMESS「普通なんかじゃいられない。」
+        let youtubeId = '832C-vN1qVo';
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '360',
@@ -216,7 +252,7 @@
         //再生スピード関数
         function playSpeed(num) {
             //setPlaybackRateが再生スピードをセットするメソッド
-            console.log(num);
+            // console.log(num);
             player.setPlaybackRate(num);
             player.playVideo();
         }
@@ -230,6 +266,51 @@
             playSpeed(parseFloat(speedBtn.speed.value));
         });
 
+    </script>
+    <script>
+        const USE_LOCAL = true; // 開発中はtrue、本番APIを叩きたいときはfalse
+        const selectvideo = document.querySelector(".ytMovie");
+
+
+        const ytSearch = function ytSearch(val) {
+            const key = 'AIzaSyA_Vg_RDv15vZ_VN1wqC7ghMe19StOSM58'; //自分のキーに書き換えます。
+            const num = 10;
+            const part = 'snippet';
+            const type = 'video';
+            const query = val;
+
+            const apiUrl = `https://www.googleapis.com/youtube/v3/search?type=${type}&part=${part}&maxResults=${num}&key=${key}&q=${query}&playsinline=1`;
+
+            // ローカル用のダミーデータ
+            const localUrl = './data/sample.json';
+            fetch(USE_LOCAL ? localUrl : apiUrl)
+                .then((data) => data.json())
+                .then((obj) => {
+                    for (let movie of obj['items']) {
+                        console.log(movie['id']['videoId']);
+                        console.log(movie['snippet']['title']);
+                        //optionを作成して、videoIdとtitleを所定の場所に設置し、要素を追加していく。
+                        const ytId = movie['id']['videoId']
+                        const ytTitle = movie["snippet"]["title"];
+                        selectvideo.innerHTML += `<option value="${ytId}">${ytTitle}</option>`;
+                        // const optionTag = document.createElement('option');
+                        // optionTag.textContent = ytTitle;
+                        // optionTag.setAttribute('value', ytId);
+                        // selectvideo.appendChild(optionTag);
+                    }
+                });
+        }
+
+
+        const ytSearchBtn = document.querySelector('#searchBtn');
+        ytSearchBtn.addEventListener('click', function (e) {
+            // 初期化
+            selectvideo.innerHTML = "";
+            const ytSearchVal = document.querySelector('#ytSearch').value;
+            console.log(ytSearchVal); //検索フォームの値を取得
+            e.preventDefault(); //検索ボタンの送信をストップしておく。
+            ytSearch(ytSearchVal);
+        });
     </script>
 </body>
 
