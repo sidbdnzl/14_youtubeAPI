@@ -35,6 +35,16 @@
             gap: 80px;
             font-size: 35px;
         }
+
+        #ytSearch {
+            height: 40px;
+            width: 500px;
+        }
+
+        span {
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -55,15 +65,17 @@
         <ul>
             <div id="one">
                 <li id="do10sPrev">⏪️</li>
-                <li id="doplay">▶️</li>
+                <span>
+                    <li id="doplay">▶️</li>
+                    <li id="dostop">⏹️</li>
+                </span>
                 <li id="do10sNext">⏩️</li>
             </div>
-            <li id="dostop">⏹️</li>
             <li id="dopause">⏸️</li>
             <li id="mute">🔕</li>
             <li>
-                <label>ボリューム<input type="range" min="0" max="100" name="volume" id="volume" value="50" />
-                    <span id="volumeNum">50</span>
+                <label>📶<input type="range" min="0" max="100" name="volume" id="volume" value="50" />
+                    <!-- <span id="volumeNum">50</span> -->
                 </label>
             </li>
             <li>
