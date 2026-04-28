@@ -5,152 +5,500 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Youtubeプレイヤー</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: #f9edff;
-        }
-
-        #player {
-            margin-top: 30px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        form {
-            margin-top: 200px;
+            background: #fff0f6;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            display: flex;
             justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .yn-wrap {
+            max-width: 660px;
+            width: 100%;
+        }
+
+        .yn-card {
+            background: #fdf6f9;
+            border: 1.5px solid #f0c0d8;
+            border-radius: 20px;
+            padding: 18px 20px;
+        }
+
+        /* --- 星飾り --- */
+        .yn-star {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 4px;
+        }
+
+        /* --- ドット飾り --- */
+        .yn-deco {
             display: flex;
             gap: 5px;
+            margin-bottom: 14px;
         }
 
-        ul {
-            list-style: none;
+        .yn-deco span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
         }
 
-        #one {
-            margin-top: 20px;
+        .yn-deco span:nth-child(1) {
+            background: #f5a8c8;
+        }
+
+        .yn-deco span:nth-child(2) {
+            background: #c9b0e8;
+        }
+
+        .yn-deco span:nth-child(3) {
+            background: #a8d4f5;
+        }
+
+        /* --- 検索行 --- */
+        .yn-search-row {
             display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .yn-search-row input {
+            flex: 1;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 13px;
+            background: #fff;
+            border: 1.5px solid #f0c0d8;
+            border-radius: 20px;
+            padding: 7px 14px;
+            color: #5a3a55;
+            outline: none;
+        }
+
+        .yn-search-row input:focus {
+            border-color: #c9b0e8;
+        }
+
+        /* --- プレーヤー枠 --- */
+        #player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #f5e6f0;
+            border: 1.5px dashed #dba8cc;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        #player iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 14px;
+        }
+
+        /* --- セクションラベル --- */
+        .yn-section-label {
+            font-size: 11px;
+            color: #c090b0;
+            letter-spacing: .08em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        /* --- トランスポート --- */
+        .yn-transport {
+            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 80px;
-            font-size: 35px;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
         }
 
-        #ytSearch {
-            height: 40px;
-            width: 500px;
+        /* --- 共通ボタン --- */
+        .yn-tbtn {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 12px;
+            background: #fff;
+            border: 1.5px solid #f0c0d8;
+            border-radius: 20px;
+            padding: 8px 14px;
+            color: #a05080;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background .15s, border-color .15s, transform .1s;
+            white-space: nowrap;
         }
 
-        span {
+        .yn-tbtn:hover {
+            background: #fce8f3;
+            border-color: #dba8cc;
+        }
+
+        .yn-tbtn:active {
+            transform: scale(0.96);
+        }
+
+        .yn-tbtn.main {
+            padding: 9px 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .yn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* --- 検索ボタン --- */
+        .yn-btn {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            background: #f5a8c8;
+            border: none;
+            border-radius: 20px;
+            padding: 7px 16px;
+            color: #5a1a3a;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background .15s, transform .1s;
+            white-space: nowrap;
+        }
+
+        .yn-btn:hover {
+            background: #f090bc;
+        }
+
+        .yn-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* --- 区切り線 --- */
+        .yn-divider {
+            height: 1px;
+            background: #f0c0d8;
+            margin: 12px 0;
+        }
+
+        /* --- 行レイアウト --- */
+        .yn-row {
             display: flex;
+            align-items: center;
             gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .yn-row-label {
+            font-size: 12px;
+            color: #b07898;
+            white-space: nowrap;
+            min-width: 36px;
+        }
+
+        /* --- 音量行 --- */
+        .yn-vol-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        input[type="range"].yn-range {
+            flex: 1;
+            max-width: 110px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            border-radius: 2px;
+            background: #f0c0d8;
+            outline: none;
+        }
+
+        input[type="range"].yn-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #d4538a;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .yn-vol-num {
+            font-size: 12px;
+            color: #a05080;
+            min-width: 24px;
+        }
+
+        /* --- ミュートボタン --- */
+        .yn-mute-btn {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 11px;
+            background: #fff;
+            border: 1.5px solid #f0c0d8;
+            border-radius: 20px;
+            padding: 5px 10px;
+            color: #a05080;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: background .15s, border-color .15s;
+            white-space: nowrap;
+        }
+
+        .yn-mute-btn:hover {
+            background: #fce8f3;
+        }
+
+        .yn-mute-btn.muted {
+            background: #c9b0e8;
+            border-color: #9070c8;
+            color: #2a1040;
+        }
+
+        /* --- セレクト --- */
+        select.yn-select {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 12px;
+            flex: 1;
+            max-width: 260px;
+            background: #fff;
+            border: 1.5px solid #f0c0d8;
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: #5a3a55;
+            outline: none;
+        }
+
+        /* --- 速度ボタン --- */
+        .yn-speed-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .yn-sbtn {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 12px;
+            background: #fff;
+            border: 1.5px solid #f0c0d8;
+            border-radius: 20px;
+            padding: 5px 12px;
+            color: #a05080;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+
+        .yn-sbtn:hover {
+            background: #fce8f3;
+        }
+
+        .yn-sbtn.sel {
+            background: #c9b0e8;
+            border-color: #c9b0e8;
+            color: #2a1040;
+            font-weight: 500;
         }
     </style>
 </head>
 
 <body>
-    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <!-- 1. ここの<div>タグがYoutubeの<iframe>に置き換わる。 -->
-    <form>
-        <input type="search" id="ytSearch" value="yonige" />
-        <button id="searchBtn">検索</button>
-    </form>
-    <div id="player"></div>
 
+    <div class="yn-wrap">
+        <div class="yn-card">
 
-    <!-- <nav>の上に -->
-    <!-- <nav>...</nav> -->
-    <!-- 動画が表示されている<div>の下に追加 -->
-    <nav>
-        <ul>
-            <div id="one">
-                <li id="do10sPrev">⏪️</li>
-                <span>
-                    <li id="doplay">▶️</li>
-                    <li id="dostop">⏹️</li>
-                </span>
-                <li id="do10sNext">⏩️</li>
+            <div class="yn-star">
+                <svg width="44" height="14" viewBox="0 0 44 14" fill="none">
+                    <path d="M7 1l1.5 4h4l-3.3 2.4 1.3 4L7 9l-3.5 2.4 1.3-4L1.5 5H5.5z" fill="#f5a8c8" />
+                    <path d="M22 1l1.5 4h4l-3.3 2.4 1.3 4L22 9l-3.5 2.4 1.3-4-3.3-2.4h4z" fill="#c9b0e8" />
+                    <path d="M37 1l1.5 4h4l-3.3 2.4 1.3 4L37 9l-3.5 2.4 1.3-4-3.3-2.4h4z" fill="#a8d4f5" />
+                </svg>
             </div>
-            <li id="dopause">⏸️</li>
-            <li id="mute">🔕</li>
-            <li>
-                <label>📶<input type="range" min="0" max="100" name="volume" id="volume" value="50" />
-                    <!-- <span id="volumeNum">50</span> -->
-                </label>
-            </li>
-            <li>
-                <select id="MovieId" class="ytMovie" name="ytMovie">
+
+            <div class="yn-deco"><span></span><span></span><span></span></div>
+
+            <!-- 検索フォーム -->
+            <div class="yn-search-row">
+                <input type="search" id="ytSearch" value="yonige" placeholder="アーティスト名..." />
+                <button class="yn-btn" id="searchBtn">
+                    <svg class="yn-icon" width="13" height="13" viewBox="0 0 16 16" fill="none">
+                        <circle cx="6.5" cy="6.5" r="4.5" stroke="#5a1a3a" stroke-width="1.5" />
+                        <path d="M10 10.5l3 3" stroke="#5a1a3a" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M6.5 4.5v4M4.5 6.5h4" stroke="#5a1a3a" stroke-width="1.2" stroke-linecap="round" />
+                    </svg>
+                    検索
+                </button>
+            </div>
+
+            <!-- YouTubeプレーヤー挿入先 -->
+            <div id="player"></div>
+
+            <!-- トランスポート -->
+            <div class="yn-section-label">— トランスポート</div>
+            <div class="yn-transport">
+
+                <button class="yn-tbtn" id="do10sPrev">
+                    <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M9 3L4 8l5 5" stroke="#a05080" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M13 3L8 8l5 5" stroke="#c9b0e8" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    10秒
+                </button>
+
+                <button class="yn-tbtn main" id="doplay">
+                    <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" fill="#f5a8c8" stroke="#f090bc" stroke-width="1" />
+                        <path d="M6.5 5.5l5 2.5-5 2.5V5.5z" fill="#5a1a3a" />
+                    </svg>
+                    再生
+                </button>
+
+                <button class="yn-tbtn main" id="dopause">
+                    <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" fill="#c9b0e8" stroke="#b090d8" stroke-width="1" />
+                        <rect x="5.5" y="5" width="2" height="6" rx="1" fill="#2a1040" />
+                        <rect x="8.5" y="5" width="2" height="6" rx="1" fill="#2a1040" />
+                    </svg>
+                    一時停止
+                </button>
+
+                <button class="yn-tbtn main" id="dostop">
+                    <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" fill="#e8d0f5" stroke="#c9a0e8" stroke-width="1" />
+                        <rect x="5.5" y="5.5" width="5" height="5" rx="1.2" fill="#5a3080" />
+                    </svg>
+                    停止
+                </button>
+
+                <button class="yn-tbtn" id="do10sNext">
+                    10秒
+                    <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 3l5 5-5 5" stroke="#c9b0e8" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M7 3l5 5-5 5" stroke="#a05080" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+
+            </div>
+
+            <div class="yn-divider"></div>
+
+            <!-- 音量 -->
+            <div class="yn-row">
+                <span class="yn-row-label">音量</span>
+                <div class="yn-vol-row">
+                    <button class="yn-mute-btn" id="mute">
+                        <svg id="muteIcon" class="yn-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 6h2l3-3v10L5 10H3a1 1 0 01-1-1V7a1 1 0 011-1z" fill="#d4538a" />
+                            <path d="M11 5.5c1.5 1 1.5 4 0 5" stroke="#d4538a" stroke-width="1.3"
+                                stroke-linecap="round" />
+                            <path d="M13 3.5c2.5 2 2.5 7 0 9" stroke="#f5a8c8" stroke-width="1.3"
+                                stroke-linecap="round" />
+                        </svg>
+                        <span id="muteLabel">ミュート</span>
+                    </button>
+                    <input type="range" class="yn-range" min="0" max="100" id="volume" name="volume" value="50"
+                        step="1" />
+                    <span class="yn-vol-num" id="volumeNum">50</span>
+                </div>
+            </div>
+
+            <!-- 動画選択 -->
+            <div class="yn-row">
+                <span class="yn-row-label">動画</span>
+                <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                    <rect x="1" y="3" width="10" height="10" rx="2" fill="#f5e6f0" stroke="#dba8cc"
+                        stroke-width="1.2" />
+                    <path d="M11 6l4-2v8l-4-2" fill="#f5a8c8" stroke="#dba8cc" stroke-width="1" />
+                </svg>
+                <select id="MovieId" class="yn-select ytMovie" name="ytMovie">
                     <option selected>選択してください。</option>
                 </select>
-            </li>
-            <li>
-                <form id="doSpeed">
+            </div>
+
+            <!-- 速度 -->
+            <div class="yn-row">
+                <span class="yn-row-label">速度</span>
+                <svg class="yn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                    <circle cx="8" cy="9" r="6" fill="#f5e6f0" stroke="#dba8cc" stroke-width="1.2" />
+                    <path d="M8 9L8 5" stroke="#d4538a" stroke-width="1.5" stroke-linecap="round" />
+                    <path d="M8 9l3-2" stroke="#a05080" stroke-width="1.3" stroke-linecap="round" />
+                    <circle cx="8" cy="9" r="1.2" fill="#d4538a" />
+                </svg>
+                <div class="yn-speed-group" id="speedGroup">
+                    <button class="yn-sbtn" data-v="0.25">0.25</button>
+                    <button class="yn-sbtn" data-v="0.5">0.5</button>
+                    <button class="yn-sbtn sel" data-v="1.0">1</button>
+                    <button class="yn-sbtn" data-v="1.5">1.5</button>
+                    <button class="yn-sbtn" data-v="2">2</button>
+                </div>
+                <!-- 元のラジオボタンは非表示で保持（player.setPlaybackRateに使用） -->
+                <form id="doSpeed" style="display:none;">
                     <input type="radio" id="mslow" name="speed" value="0.25" />
-                    <label for="mslow">0.25</label>
                     <input type="radio" id="slow" name="speed" value="0.5" />
-                    <label for="slow">0.5</label>
                     <input type="radio" id="normal" name="speed" value="1.0" checked />
-                    <label for="normal">1</label>
                     <input type="radio" id="hspeed" name="speed" value="1.5" />
-                    <label for="hspeed">1.5</label>
                     <input type="radio" id="mhspeed" name="speed" value="2" />
-                    <label for="mhspeed">2</label>
                 </form>
-            </li>
-        </ul>
-    </nav>
+            </div>
 
-
+        </div>
+    </div>
 
 
     <script>
-        // 2. This code loads the IFrame Player API code asynchronously.
-        // 2. 変数tagにscriptタグを作って入れる。Element=要素、Attrubute=属性
+        // ---- YouTube IFrame API ----
         var tag = document.createElement('script');
-
         tag.src = 'https://www.youtube.com/iframe_api';
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        // 3. This function creates an <iframe> (and YouTube player)
-        //    after the API code downloads.
-        // 3. APIのコードを読み込んでから、この関数を<iframe>内に影響させる。
         var player;
         let youtubeId = '832C-vN1qVo';
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '360',
                 width: '640',
                 videoId: youtubeId,
-                playerVars: {
-                    //③パラメータの設定
-                    playsinline: 1,
-                    controls: 0
-                },
-                events: {
-                    onReady: onPlayerReady, //エラーで効かない。
-                    // // onStateChange: onPlayerStateChange
-                }
+                playerVars: { playsinline: 1, controls: 0 },
+                events: { onReady: onPlayerReady }
             });
         }
 
-        // 4. The API will call this function when the video player is ready.
-        // 4. このAPIは、video playderが準備でしたら、この関数を呼び出します。
         function onPlayerReady(event) {
             event.target.playVideo();
-            let currentVol = 5; //②最初のボリュームを設定（0〜100）
-            event.target.setVolume(currentVol); //③Playerのボリュームに設定
-            document.querySelector('#volume').value = currentVol; //④rangeFormに音量を設定
-            document.querySelector('#volumeNum').textContent = currentVol; //⑤テキストにも音量を数値で表示
+            let currentVol = 5;
+            event.target.setVolume(currentVol);
+            document.querySelector('#volume').value = currentVol;
+            document.querySelector('#volumeNum').textContent = currentVol;
             stopVideo();
         }
 
-        // 5. The API calls this function when the player's state changes.
-        //    The function indicates that when playing a video (state=1),
-        //    the player should play for six seconds and then stop.
-        /* 5. video playerのステート（状態）が変更されたら、この関数を呼び出す。
-      動画を再生するときの設定は、state=1にしておきます。
-      プレイヤーは、6000ミリ秒後に終了します。 */
         var done = false;
         function onPlayerStateChange(event) {
             if (event.data == YT.PlayerState.PLAYING && !done) {
@@ -159,171 +507,123 @@
             }
         }
 
-        //再生関数
-        function playTheVideo() {
-            player.playVideo();
-        }
-        // playTheVideoで関数を実行すると、Player.playVideoを実行する。
-        let doplay = document.querySelector('#doplay');//id=dplayのhtmlを取得
-        doplay.addEventListener('click', function () {
-            playTheVideo();
-        })
-        //停止関数
-        function stopVideo() {
-            player.stopVideo();
-        }
+        function playTheVideo() { player.playVideo(); }
+        function stopVideo() { player.stopVideo(); }
+        function pauseTheVideo() { player.pauseVideo(); }
 
-        let dostop = document.querySelector('#dostop');
-        dostop.addEventListener('click', function () {
-            stopVideo();
-        })
+        document.querySelector('#doplay').addEventListener('click', playTheVideo);
+        document.querySelector('#dostop').addEventListener('click', stopVideo);
+        document.querySelector('#dopause').addEventListener('click', pauseTheVideo);
 
-        //一時停止関数
-        function pauseTheVideo() {
-            player.pauseVideo();
-        }
+        // ---- ミュート ----
+        const muteBtn = document.querySelector('#mute');
+        const muteIcon = document.querySelector('#muteIcon');
+        const muteLabel = document.querySelector('#muteLabel');
+        let muted = false, lastVol = 50;
 
-        //一時停止イベント
-        let dopauseBtn = document.querySelector('#dopause');
-        dopauseBtn.addEventListener('click', function () {
-            pauseTheVideo();
-        })
+        const svgOn = `<path d="M3 6h2l3-3v10L5 10H3a1 1 0 01-1-1V7a1 1 0 011-1z" fill="#d4538a"/><path d="M11 5.5c1.5 1 1.5 4 0 5" stroke="#d4538a" stroke-width="1.3" stroke-linecap="round"/><path d="M13 3.5c2.5 2 2.5 7 0 9" stroke="#f5a8c8" stroke-width="1.3" stroke-linecap="round"/>`;
+        const svgOff = `<path d="M3 6h2l3-3v10L5 10H3a1 1 0 01-1-1V7a1 1 0 011-1z" fill="#7060a0"/><path d="M12 6l2.5 2.5M14.5 6L12 8.5" stroke="#7060a0" stroke-width="1.4" stroke-linecap="round"/>`;
 
-        // ミュート
-        function onMute() {
-            //ミュートの時、trueを返すのでミュートを解除します。
-            if (player.isMuted()) {
-                player.unMute();
+        function setMuted(val) {
+            muted = val;
+            if (muted) {
+                lastVol = parseInt(document.querySelector('#volume').value) || lastVol;
+                document.querySelector('#volume').value = 0;
+                document.querySelector('#volumeNum').textContent = '0';
+                muteBtn.classList.add('muted');
+                muteIcon.innerHTML = svgOff;
+                muteLabel.textContent = 'ミュート解除';
+                if (player && player.mute) player.mute();
             } else {
-                //ミュートが解除されている時はfalseなので、ミュートにします。
-                player.mute();
+                document.querySelector('#volume').value = lastVol;
+                document.querySelector('#volumeNum').textContent = lastVol;
+                muteBtn.classList.remove('muted');
+                muteIcon.innerHTML = svgOn;
+                muteLabel.textContent = 'ミュート';
+                if (player && player.unMute) player.unMute();
             }
         }
 
-        //ミュートイベント
-        let onMuteBtn = document.querySelector('#mute');
-        onMuteBtn.addEventListener('click', function () {
-            onMute();
-            if (onMuteBtn.innerText === 'ミュート') {
-                onMuteBtn.innerText = 'ミュート解除';
-            } else {
-                onMuteBtn.innerText = 'ミュート';
+        muteBtn.addEventListener('click', () => setMuted(!muted));
+
+        // ---- 音量スライダー ----
+        document.querySelector('#volume').addEventListener('input', function () {
+            document.querySelector('#volumeNum').textContent = this.value;
+            if (player && player.setVolume) player.setVolume(this.value);
+            if (parseInt(this.value) === 0 && !muted) {
+                muted = true; muteBtn.classList.add('muted'); muteIcon.innerHTML = svgOff; muteLabel.textContent = 'ミュート解除';
+            } else if (parseInt(this.value) > 0 && muted) {
+                muted = false; muteBtn.classList.remove('muted'); muteIcon.innerHTML = svgOn; muteLabel.textContent = 'ミュート';
             }
         });
-        //10秒前にの関数
-        function onePrev() {
-            let currentTime = player.getCurrentTime();
-            player.seekTo(currentTime - 10);
-        }
 
-        //10秒後にの関数
-        function oneNext() {
-            let currentTime = player.getCurrentTime();
-            player.seekTo(currentTime + 10);
-        }
-
-        //10秒前へイベント
-        let onePrevBtn = document.querySelector('#do10sPrev');
-        onePrevBtn.addEventListener('click', function () {
-            onePrev();
+        // ---- 10秒送り/戻り ----
+        document.querySelector('#do10sPrev').addEventListener('click', () => {
+            if (player && player.getCurrentTime) player.seekTo(player.getCurrentTime() - 10);
+        });
+        document.querySelector('#do10sNext').addEventListener('click', () => {
+            if (player && player.getCurrentTime) player.seekTo(player.getCurrentTime() + 10);
         });
 
-        //10秒後へイベント
-        let oneNextBtn = document.querySelector('#do10sNext');
-        oneNextBtn.addEventListener('click', function () {
-            oneNext();
+        // ---- 速度ボタン ----
+        document.getElementById('speedGroup').addEventListener('click', function (e) {
+            const btn = e.target.closest('.yn-sbtn');
+            if (!btn) return;
+            document.querySelectorAll('.yn-sbtn').forEach(b => b.classList.remove('sel'));
+            btn.classList.add('sel');
+            const speed = parseFloat(btn.dataset.v);
+            // 隠しラジオボタンも連動
+            const radio = document.querySelector(`#doSpeed input[value="${btn.dataset.v}"]`);
+            if (radio) radio.checked = true;
+            if (player && player.setPlaybackRate) {
+                player.setPlaybackRate(speed);
+                player.playVideo();
+            }
         });
 
-        //ボリューム関数
-        function volumeFn(vol) {
-            // 現在のボリューム
-            let currentVol = player.getVolume();
-            // Youtubeがもともと持っている関数
-            player.setVolume(vol);
-        }
-
-        //ボリュームイベント
-        let volumeBtn = document.querySelector('#volume');
-        // ボリュームの数値を入れているspan
-        let volumeTxt = document.querySelector('#volumeNum');
-        volumeBtn.addEventListener('change', function () {
-            // 関数の実行Volume()+引数
-            volumeFn(this.value);
-            volumeTxt.textContent = this.value;
-        });
-
-        //動画切り替えイベント
-        let movieid = document.querySelector('#MovieId');
-        movieid.addEventListener('change', function () {
-            youtubeId = movieid.value;
-            //プレイヤー削除
-            player.destroy();
+        // ---- 動画切り替え ----
+        document.querySelector('#MovieId').addEventListener('change', function () {
+            youtubeId = this.value;
+            if (player && player.destroy) player.destroy();
             onYouTubeIframeAPIReady();
         });
 
-        //再生スピード関数
-        function playSpeed(num) {
-            //setPlaybackRateが再生スピードをセットするメソッド
-            // console.log(num);
-            player.setPlaybackRate(num);
-            player.playVideo();
-        }
+        // ---- YouTube検索API ----
+        const USE_LOCAL = false; // sample.jsonがある場合はtrueに変更
+        const selectvideo = document.querySelector('.ytMovie');
 
-        //再生スピードイベント(radioボタンからの取得)
-        // formを取得して
-        let speedBtn = document.querySelector('#doSpeed');
-        speedBtn.addEventListener('change', function () {
-            //数値でないと効かないので、文字列から数値に変換
-            // htmlから取得する数値は、全部文字列
-            playSpeed(parseFloat(speedBtn.speed.value));
-        });
-
-    </script>
-    <script>
-        const USE_LOCAL = true; // 開発中はtrue、本番APIを叩きたいときはfalse
-        const selectvideo = document.querySelector(".ytMovie");
-
-
-        const ytSearch = function ytSearch(val) {
-            const key = ''; //自分のキーに書き換えます。
+        function ytSearch(val) {
+            const key = 'あなたのAPIキーを入れてください'; // 自分のAPIキーに書き換えてください
             const num = 10;
             const part = 'snippet';
             const type = 'video';
-            const query = val;
-
-            const apiUrl = `https://www.googleapis.com/youtube/v3/search?type=${type}&part=${part}&maxResults=${num}&key=${key}&q=${query}&playsinline=1`;
-
-            // ローカル用のダミーデータ
+            const apiUrl = `https://www.googleapis.com/youtube/v3/search?type=${type}&part=${part}&maxResults=${num}&key=${key}&q=${val}&playsinline=1`;
             const localUrl = './data/sample.json';
+
             fetch(USE_LOCAL ? localUrl : apiUrl)
-                .then((data) => data.json())
-                .then((obj) => {
+                .then(res => res.json())
+                .then(obj => {
+                    selectvideo.innerHTML = '<option>選択してください。</option>';
                     for (let movie of obj['items']) {
-                        console.log(movie['id']['videoId']);
-                        console.log(movie['snippet']['title']);
-                        //optionを作成して、videoIdとtitleを所定の場所に設置し、要素を追加していく。
-                        const ytId = movie['id']['videoId']
-                        const ytTitle = movie["snippet"]["title"];
+                        const ytId = movie['id']['videoId'];
+                        const ytTitle = movie['snippet']['title'];
                         selectvideo.innerHTML += `<option value="${ytId}">${ytTitle}</option>`;
-                        // const optionTag = document.createElement('option');
-                        // optionTag.textContent = ytTitle;
-                        // optionTag.setAttribute('value', ytId);
-                        // selectvideo.appendChild(optionTag);
                     }
+                })
+                .catch(err => {
+                    console.error('検索エラー:', err);
+                    selectvideo.innerHTML = '<option>取得に失敗しました</option>';
                 });
         }
 
-
-        const ytSearchBtn = document.querySelector('#searchBtn');
-        ytSearchBtn.addEventListener('click', function (e) {
-            // 初期化
-            selectvideo.innerHTML = "";
-            const ytSearchVal = document.querySelector('#ytSearch').value;
-            console.log(ytSearchVal); //検索フォームの値を取得
-            e.preventDefault(); //検索ボタンの送信をストップしておく。
-            ytSearch(ytSearchVal);
+        document.querySelector('#searchBtn').addEventListener('click', function (e) {
+            e.preventDefault();
+            selectvideo.innerHTML = '<option>検索中...</option>';
+            const val = document.querySelector('#ytSearch').value;
+            ytSearch(val);
         });
     </script>
+
 </body>
 
 </html>
